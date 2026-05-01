@@ -71,7 +71,7 @@ function App() {
         </p>
 
         <div className="contact-links">
-          <a href="mailto:paul.tey.yf@gmail.com">Email</a>
+          <a href="mailto:paul.tey.yf+portfolio@gmail.com">Email</a>
           <a href="https://github.com/Paul-Tey" target="_blank" rel="noreferrer">
             GitHub
           </a>
