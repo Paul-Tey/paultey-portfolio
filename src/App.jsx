@@ -1,10 +1,14 @@
 import { projects } from "./data/projects";
 import ProjectCard from "./components/ProjectCard";
+import Navbar from "./components/Navbar";
 import "./index.css";
 
 function App() {
   return (
-    <main>
+    <>
+      <Navbar />
+
+      <main id="top">
       <section className="hero">
         <p className="eyebrow">Computer Engineering Portfolio</p>
 
@@ -26,7 +30,7 @@ function App() {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section" id="about">
         <h2>About</h2>
 
         <p>
@@ -36,7 +40,7 @@ function App() {
         </p>
       </section>
 
-      <section className="section">
+      <section className="section" id="skills">
         <h2>Skills</h2>
 
         <div className="skill-list">
@@ -80,7 +84,8 @@ function App() {
           </a>
         </div>
       </section>
-    </main>
+          </main>
+    </>
   );
 }
 
