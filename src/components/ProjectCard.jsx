@@ -38,24 +38,26 @@ function ProjectCard({ project }) {
 
       {isExpanded && (
         <div className="expanded-details">
-          <div className="project-detail">
-            <h4>Problem</h4>
-            <p>{project.problem}</p>
-          </div>
+          <div className="project-detail-grid">
+            <div className="project-detail">
+              <h4>Problem</h4>
+              <p>{project.problem}</p>
+            </div>
 
-          <div className="project-detail">
-            <h4>Architecture</h4>
-            <p>{project.architecture}</p>
-          </div>
+            <div className="project-detail">
+              <h4>Architecture</h4>
+              <p>{project.architecture}</p>
+            </div>
 
-          <div className="project-detail">
-            <h4>Challenges</h4>
-            <p>{project.challenges}</p>
-          </div>
+            <div className="project-detail">
+              <h4>Challenges</h4>
+              <p>{project.challenges}</p>
+            </div>
 
-          <div className="project-detail">
-            <h4>Future improvements</h4>
-            <p>{project.futureImprovements}</p>
+            <div className="project-detail">
+              <h4>Future improvements</h4>
+              <p>{project.futureImprovements}</p>
+            </div>
           </div>
 
           <div className="project-lists">

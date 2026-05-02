@@ -1,9 +1,27 @@
+import { useState } from "react";
 import { projects } from "./data/projects";
+import { notes } from "./data/notes";
 import ProjectCard from "./components/ProjectCard";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import ContactForm from "./components/ContactForm";
 import "./index.css";
 
+function scrollToSection(sectionId) {
+  document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+}
+
 function App() {
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const projectCategories = [
+    "All",
+    ...new Set(projects.map((project) => project.category))
+  ];
+  const filteredProjects =
+    selectedCategory === "All"
+      ? projects
+      : projects.filter((project) => project.category === selectedCategory);
+
   return (
     <>
       <Navbar />
@@ -20,9 +38,13 @@ function App() {
           </p>
 
           <div className="hero-actions">
-            <a href="#projects" className="button primary-button">
+            <button
+              className="button primary-button"
+              type="button"
+              onClick={() => scrollToSection("projects")}
+            >
               View Projects
-            </a>
+            </button>
 
             <a
               href="/Paul_Tey_Resume.pdf"
@@ -33,12 +55,16 @@ function App() {
               Resume / CV
             </a>
 
-            <a href="#contact" className="button secondary-button">
+            <button
+              className="button secondary-button"
+              type="button"
+              onClick={() => scrollToSection("contact")}
+            >
               Contact Me
-            </a>
+            </button>
           </div>
 
-          <p className="resume-note">Resume PDF will be added soon.</p>
+          <p className="resume-note">Resume PDF opens in a new tab.</p>
         </section>
 
         <section className="section" id="about">
@@ -89,8 +115,24 @@ function App() {
             </p>
           </div>
 
+          <div className="filter-controls" aria-label="Project category filters">
+            {projectCategories.map((category) => (
+              <button
+                key={category}
+                className={`filter-button${
+                  selectedCategory === category ? " active" : ""
+                }`}
+                type="button"
+                aria-pressed={selectedCategory === category}
+                onClick={() => setSelectedCategory(category)}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+
           <div className="project-grid">
-            {projects.map((project) => (
+            {filteredProjects.map((project) => (
               <ProjectCard key={project.title} project={project} />
             ))}
           </div>
@@ -106,25 +148,17 @@ function App() {
           </div>
 
           <div className="notes-grid">
-            <article className="note-card">
-              <h3>STM32 + ESP01 Integration</h3>
-              <p>Placeholder for UART wiring, firmware flow, and alert testing notes.</p>
-            </article>
+            {notes.map((note) => (
+              <article className="note-card" key={note.title}>
+                <div className="note-card-header">
+                  <p className="note-category">{note.category}</p>
+                  <span className="note-status">{note.status}</span>
+                </div>
 
-            <article className="note-card">
-              <h3>Jetson Nano Camera Benchmarking</h3>
-              <p>Placeholder for camera pipeline, encoding, and performance comparison notes.</p>
-            </article>
-
-            <article className="note-card">
-              <h3>GitHub + Cloudflare Deployment Workflow</h3>
-              <p>Placeholder for local build, repository, and deployment workflow notes.</p>
-            </article>
-
-            <article className="note-card">
-              <h3>C2000 ePWM Learning Notes</h3>
-              <p>Placeholder for PWM setup, timing concepts, and lab learning notes.</p>
-            </article>
+                <h3>{note.title}</h3>
+                <p>{note.summary}</p>
+              </article>
+            ))}
           </div>
         </section>
 
@@ -132,22 +166,33 @@ function App() {
           <h2>Contact</h2>
 
           <p>
-            I am currently building this website as a public technical portfolio.
-            More project writeups, GitHub links, and technical notes will be added
-            later.
+            I am open to technical discussions, project collaboration,
+            internship-related opportunities, and engineering learning exchanges.
           </p>
 
-          <div className="contact-links">
-            <a href="mailto:paul.tey.yf+portfolio@gmail.com">Email</a>
-            <a href="https://github.com/Paul-Tey" target="_blank" rel="noreferrer">
-              GitHub
-            </a>
-            <a href="https://www.linkedin.com/in/paul-t-82b750252/" target="_blank" rel="noreferrer">
-              LinkedIn
-            </a>
+          <div className="contact-layout">
+            <ContactForm />
+
+            <div className="contact-aside">
+              <p>
+                For background, project experience, and contact details, the
+                resume PDF opens in a new tab.
+              </p>
+
+              <a
+                className="button secondary-button"
+                href="/Paul_Tey_Resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Resume / CV
+              </a>
+            </div>
           </div>
         </section>
       </main>
+
+      <Footer />
     </>
   );
 }
