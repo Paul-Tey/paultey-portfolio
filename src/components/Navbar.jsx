@@ -1,16 +1,36 @@
+const navItems = [
+  { label: "About", sectionId: "about" },
+  { label: "Skills", sectionId: "skills" },
+  { label: "Projects", sectionId: "projects" },
+  { label: "Notes", sectionId: "technical-notes" },
+  { label: "Contact", sectionId: "contact" }
+];
+
+function scrollToSection(sectionId) {
+  document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+}
+
 function Navbar() {
   return (
     <header className="navbar">
-      <a href="#top" className="navbar-logo">
+      <button
+        className="navbar-logo"
+        type="button"
+        onClick={() => scrollToSection("top")}
+      >
         Paul Tey
-      </a>
+      </button>
 
       <nav className="navbar-links" aria-label="Main navigation">
-        <a href="#about">About</a>
-        <a href="#skills">Skills</a>
-        <a href="#projects">Projects</a>
-        <a href="#technical-notes">Notes</a>
-        <a href="#contact">Contact</a>
+        {navItems.map((item) => (
+          <button
+            key={item.sectionId}
+            type="button"
+            onClick={() => scrollToSection(item.sectionId)}
+          >
+            {item.label}
+          </button>
+        ))}
       </nav>
     </header>
   );
