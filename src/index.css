@@ -23,6 +23,11 @@ button {
   font: inherit;
 }
 
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
 .button,
 .navbar-logo,
 .navbar-links button,
@@ -458,10 +463,22 @@ p {
   resize: vertical;
 }
 
+.honeypot-field {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 .form-row input:hover,
 .form-row select:hover,
 .form-row textarea:hover {
   border-color: #999999;
+}
+
+.turnstile-widget {
+  min-height: 65px;
 }
 
 .form-note,
@@ -482,6 +499,18 @@ p {
   padding: 12px;
   background: #f8f8f8;
   color: #222222;
+}
+
+.form-status.success {
+  border-color: #9ac7a5;
+  background: #f1fbf3;
+  color: #1d5f2a;
+}
+
+.form-status.error {
+  border-color: #d7a0a0;
+  background: #fff5f5;
+  color: #8a1f1f;
 }
 
 .contact-aside {
