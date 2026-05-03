@@ -382,6 +382,10 @@ p {
   margin-bottom: 0;
 }
 
+.technical-notes-list li {
+  color: #333333;
+}
+
 .project-links {
   display: flex;
   flex-wrap: wrap;
@@ -527,62 +531,6 @@ p {
   color: #444444;
 }
 
-.notes-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
-}
-
-.note-card {
-  min-height: 170px;
-  background: #ffffff;
-  border: 1px solid #d9d9d9;
-  border-radius: 8px;
-  padding: 22px;
-  box-shadow: 0 10px 24px rgba(17, 17, 17, 0.04);
-}
-
-.note-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.note-category,
-.note-status {
-  margin: 0;
-  border: 1px solid #cfcfcf;
-  border-radius: 999px;
-  padding: 5px 9px;
-  background: #f4f4f4;
-  color: #555555;
-  font-size: 12px;
-  font-weight: bold;
-  letter-spacing: 0.06em;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-
-.note-status {
-  flex: 0 0 auto;
-  background: #ffffff;
-  color: #333333;
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-.note-card h3 {
-  margin-bottom: 12px;
-  font-size: 20px;
-}
-
-.note-card p {
-  margin: 0;
-  color: #444444;
-}
-
 .site-footer {
   width: min(1100px, 92%);
   margin: 0 auto;
@@ -664,7 +612,6 @@ p {
   }
 
   .project-grid,
-  .notes-grid,
   .project-detail-grid,
   .contact-layout,
   .site-footer {
@@ -704,11 +651,6 @@ p {
   .filter-button {
     width: 100%;
     text-align: center;
-  }
-
-  .note-card-header {
-    align-items: flex-start;
-    flex-direction: column;
   }
 
   .footer-links {
