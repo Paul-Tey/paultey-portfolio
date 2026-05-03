@@ -2,7 +2,6 @@ const navItems = [
   { label: "About", sectionId: "about" },
   { label: "Skills", sectionId: "skills" },
   { label: "Projects", sectionId: "projects" },
-  { label: "Notes", sectionId: "technical-notes" },
   { label: "Contact", sectionId: "contact" }
 ];
 

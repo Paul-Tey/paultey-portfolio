@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { projects } from "./data/projects";
-import { notes } from "./data/notes";
 import ProjectCard from "./components/ProjectCard";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -134,30 +133,6 @@ function App() {
           <div className="project-grid">
             {filteredProjects.map((project) => (
               <ProjectCard key={project.title} project={project} />
-            ))}
-          </div>
-        </section>
-
-        <section className="section" id="technical-notes">
-          <div className="section-heading">
-            <h2>Technical Notes</h2>
-            <p>
-              Short writeups will be added here for build notes, experiments,
-              deployment steps, and learning records.
-            </p>
-          </div>
-
-          <div className="notes-grid">
-            {notes.map((note) => (
-              <article className="note-card" key={note.title}>
-                <div className="note-card-header">
-                  <p className="note-category">{note.category}</p>
-                  <span className="note-status">{note.status}</span>
-                </div>
-
-                <h3>{note.title}</h3>
-                <p>{note.summary}</p>
-              </article>
             ))}
           </div>
         </section>

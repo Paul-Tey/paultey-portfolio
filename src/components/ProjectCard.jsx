@@ -78,6 +78,17 @@ function ProjectCard({ project }) {
                 ))}
               </ul>
             </div>
+
+            {project.technicalNotes?.length > 0 && (
+              <div>
+                <h4>Technical Notes / Lessons</h4>
+                <ul className="technical-notes-list">
+                  {project.technicalNotes.map((note) => (
+                    <li key={note}>{note}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       )}
