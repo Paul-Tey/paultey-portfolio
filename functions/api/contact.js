@@ -8,6 +8,12 @@ const MAX_LENGTHS = {
 
 const REQUIRED_FIELDS = ["name", "email", "reason", "subject", "message"];
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const REASON_LABELS = {
+  "technical-discussion": "Technical discussion",
+  "project-collaboration": "Project collaboration",
+  internship: "Internship-related opportunity",
+  "learning-exchange": "Engineering learning exchange",
+};
 
 function jsonResponse(body, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -96,7 +102,7 @@ async function verifyTurnstile({ request, token, secretKey }) {
   return Boolean(result?.success);
 }
 
-function buildEmailHtml(fields) {
+function buildEmailHtml(fields, { reasonLabel, submittedAt }) {
   const escapeHtml = (value) =>
     value
       .replace(/&/g, "&amp;")
@@ -109,14 +115,36 @@ function buildEmailHtml(fields) {
     <h2>New portfolio contact message</h2>
     <p><strong>Name:</strong> ${escapeHtml(fields.name)}</p>
     <p><strong>Email:</strong> ${escapeHtml(fields.email)}</p>
-    <p><strong>Reason:</strong> ${escapeHtml(fields.reason)}</p>
+    <p><strong>Reason:</strong> ${escapeHtml(reasonLabel)}</p>
     <p><strong>Subject:</strong> ${escapeHtml(fields.subject)}</p>
+    <p><strong>Submitted:</strong> ${escapeHtml(submittedAt)}</p>
     <p><strong>Message:</strong></p>
     <p>${escapeHtml(fields.message).replace(/\n/g, "<br>")}</p>
   `;
 }
 
+function getReasonLabel(reason) {
+  return REASON_LABELS[reason] || reason;
+}
+
+function formatSubmittedAt(date = new Date()) {
+  return new Intl.DateTimeFormat("en-SG", {
+    timeZone: "Asia/Singapore",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+    timeZoneName: "short",
+  }).format(date);
+}
+
 async function sendEmail({ fields, env }) {
+  const reasonLabel = getReasonLabel(fields.reason);
+  const submittedAt = formatSubmittedAt();
+
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
@@ -128,13 +156,14 @@ async function sendEmail({ fields, env }) {
       to: env.CONTACT_TO_EMAIL,
       subject: `Portfolio contact: ${fields.subject}`,
       reply_to: fields.email,
-      html: buildEmailHtml(fields),
+      html: buildEmailHtml(fields, { reasonLabel, submittedAt }),
       text: [
         "New portfolio contact message",
         `Name: ${fields.name}`,
         `Email: ${fields.email}`,
-        `Reason: ${fields.reason}`,
+        `Reason: ${reasonLabel}`,
         `Subject: ${fields.subject}`,
+        `Submitted: ${submittedAt}`,
         "",
         fields.message,
       ].join("\n"),
