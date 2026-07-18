@@ -5,6 +5,7 @@ import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import ProjectCard from "./components/ProjectCard";
 import Reveal from "./components/Reveal";
+import { scrollToSection } from "./utils/scrollToSection";
 import "./index.css";
 
 const skillGroups = [
@@ -42,10 +43,6 @@ const heroLabels = [
   "AI / Computer Vision",
 ];
 
-function scrollToSection(sectionId) {
-  document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
-}
-
 function SectionIntro({ index, label, title, description }) {
   return (
     <div className="section-intro">
@@ -72,11 +69,21 @@ function App() {
       ? projects
       : projects.filter((project) => project.category === selectedCategory);
 
+  function skipToContent() {
+    const mainContent = document.getElementById("main-content");
+    scrollToSection("main-content");
+    mainContent?.focus({ preventScroll: true });
+  }
+
   return (
     <>
+      <button className="skip-link" type="button" onClick={skipToContent}>
+        Skip to main content
+      </button>
       <Navbar />
 
-      <main id="top">
+      <main id="main-content" tabIndex="-1">
+        <span id="top" className="scroll-target" aria-hidden="true" />
         <section className="hero" aria-labelledby="hero-title">
           <div className="hero-grid" aria-hidden="true">
             <span className="signal signal-one" />
@@ -250,6 +257,13 @@ function App() {
                 />
               ))}
             </div>
+            <p className="sr-only" role="status" aria-live="polite">
+              Showing {filteredProjects.length}{" "}
+              {filteredProjects.length === 1 ? "project" : "projects"}
+              {selectedCategory === "All"
+                ? "."
+                : ` in ${selectedCategory}.`}
+            </p>
           </section>
         </Reveal>
 

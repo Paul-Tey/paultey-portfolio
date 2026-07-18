@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { scrollToSection } from "../utils/scrollToSection";
 
 const navItems = [
   { label: "About", sectionId: "about" },
@@ -6,10 +7,6 @@ const navItems = [
   { label: "Projects", sectionId: "projects" },
   { label: "Contact", sectionId: "contact" },
 ];
-
-function scrollToSection(sectionId) {
-  document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
-}
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);

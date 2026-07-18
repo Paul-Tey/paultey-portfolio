@@ -103,6 +103,33 @@ textarea:focus-visible {
   border: 0;
 }
 
+.skip-link {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 100;
+  padding: 11px 15px;
+  border: 1px solid var(--cyan);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--cyan);
+  font-weight: 700;
+  transform: translateY(calc(-100% - 14px));
+  transition: transform 150ms ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.scroll-target {
+  position: absolute;
+}
+
+#main-content:focus {
+  outline: none;
+}
+
 main,
 .site-footer {
   width: min(var(--page-width), calc(100% - 48px));
