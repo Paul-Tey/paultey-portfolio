@@ -5,15 +5,27 @@ export const projects = [
     status: "Live portfolio",
     role: "Frontend and deployment owner",
     summary:
-      "A single-page React portfolio used to present engineering projects, technical learning, and a protected contact workflow.",
+      "A live React portfolio for presenting engineering work, technical learning, and a protected contact workflow.",
     problem:
-      "The site needed to stay simple for visitors while still supporting reliable deployment, contact-form protection, and clear project documentation.",
+      "Visitors needed a clear way to understand the work across hardware and software, while the site still had to support reliable deployment and a contact route that does not expose private email details.",
     architecture:
       "React and Vite build a static single-page app that deploys through Cloudflare Pages, with a serverless contact endpoint using Turnstile validation and Resend email delivery.",
     challenges:
-      "Keeping deployment, security rules, and contact-form behavior understandable while debugging production-only 403 and 502 responses.",
+      "Keeping deployment, security rules, and contact-form behaviour understandable while investigating production-only 403 and 502 responses.",
+    designDecisions: [
+      "Kept project content separate from card presentation so every case study follows a consistent structure.",
+      "Used a static frontend with a serverless function only for the contact path, avoiding a larger application server.",
+      "Kept Turnstile and Resend secrets in the server-side environment; the browser receives only the public widget key."
+    ],
+    validation: [
+      "Checked lint and production builds before reviewed changes.",
+      "Exercised navigation, project filters, expanded details, contact states, and responsive layouts in the browser.",
+      "Tested server-side validation with mocked Turnstile and Resend responses rather than contacting live services."
+    ],
+    outcome:
+      "Delivered the live portfolio and a protected contact path that keeps private mail credentials outside browser code.",
     futureImprovements:
-      "Add richer project screenshots, improve project filtering, and document production troubleshooting steps more completely.",
+      "Add verified case-study media and keep automated checks and production troubleshooting notes aligned with future changes.",
     techStack: ["React", "Vite", "Cloudflare Pages", "Turnstile", "Resend"],
     keyFeatures: [
       "Single-page portfolio with smooth section navigation",
@@ -29,8 +41,7 @@ export const projects = [
       "Use Git feature branches and pull requests before reviewed changes land on main.",
       "Cloudflare Pages deploys from main, while environment variables and secrets stay out of committed code.",
       "The WAF setup blocks POST requests except the intended POST /api/contact route.",
-      "403 debugging focused on request filtering; 502 debugging focused on function/runtime and upstream email behavior.",
-      "The contact form combines Turnstile verification with Resend delivery instead of exposing mail credentials in frontend code."
+      "403 debugging focused on request filtering; 502 debugging focused on function runtime and upstream email behaviour."
     ],
     links: {
       github: null,
@@ -87,6 +98,17 @@ export const projects = [
       "Python scripts run capture and output tests using OpenCV and GStreamer, then compare practical metrics such as runtime, CPU load, and output file size.",
     challenges:
       "Understanding how capture backends, encoder choices, and hardware acceleration affected the same camera workload.",
+    designDecisions: [
+      "Used OpenCV for rapid camera experiments and GStreamer when more direct pipeline and encoder control was needed.",
+      "Compared CPU use, output size, runtime, and recording stability together instead of treating one metric as the answer.",
+      "Included hardware H.264 encoding as a practical option for reducing CPU pressure on the Jetson Nano."
+    ],
+    validation: [
+      "Ran camera capture and output tests through both OpenCV and GStreamer paths.",
+      "Compared observed runtime, CPU load, and output file size across the investigated approaches."
+    ],
+    outcome:
+      "Documented the practical trade-offs between simpler capture code and more configurable, hardware-assisted video pipelines on the Jetson Nano.",
     futureImprovements:
       "Automate repeatable benchmark runs, export clearer result tables, and test more camera resolutions and frame rates.",
     techStack: ["Python", "OpenCV", "GStreamer", "Jetson Nano", "H.264"],
@@ -101,9 +123,7 @@ export const projects = [
       "Learned how hardware encoding affects embedded video workloads"
     ],
     technicalNotes: [
-      "OpenCV made quick camera experiments straightforward, while GStreamer exposed more control over the pipeline.",
-      "Hardware H.264 encoding can reduce CPU pressure, but settings still affect file size and runtime behavior.",
-      "CPU usage, output size, and recording stability need to be compared together instead of as separate wins.",
+      "Encoder settings still affect output size and runtime behaviour when hardware H.264 encoding is used.",
       "Repeatable benchmarks should lock resolution, frame rate, encoder settings, duration, and capture conditions."
     ],
     links: {
@@ -160,6 +180,18 @@ export const projects = [
       "A Python CLI detects serial devices, loads product-specific test routines, executes them in a consistent order, and writes structured results to CSV.",
     challenges:
       "Designing shared serial tooling that stays reusable while still allowing each product to define its own checks.",
+    designDecisions: [
+      "Placed port discovery, connection setup, result formatting, and CSV output in the shared framework.",
+      "Kept product-specific checks separate from common serial utilities so new test routines do not duplicate connection code.",
+      "Used explicit pass or fail output because results may be reviewed after a device is disconnected."
+    ],
+    validation: [
+      "Exercised automatic detection of valid serial devices.",
+      "Ran product-specific test functions through the shared command-line workflow.",
+      "Confirmed that structured results were written to CSV for later review."
+    ],
+    outcome:
+      "Produced a reusable framework prototype that standardises serial test execution and leaves a traceable result file without claiming batch-device support.",
     futureImprovements:
       "Add richer reports, configurable test plans, better error recovery, and support for running batches of devices.",
     techStack: ["Python", "Serial Communication", "CSV Logging", "CLI"],
@@ -174,9 +206,8 @@ export const projects = [
       "Improved reliability by writing structured test output to CSV"
     ],
     technicalNotes: [
-      "The shared framework should own port discovery, connection setup, result formatting, and CSV output.",
-      "Product-specific checks stay easier to maintain when they are isolated from common serial utilities.",
-      "Clear pass/fail messages matter because test logs may be reviewed after the device is disconnected."
+      "Connection failures and malformed device responses need explicit recovery paths before the framework is used for longer unattended runs.",
+      "Batch execution remains future work rather than a completed feature."
     ],
     links: {
       github: null,

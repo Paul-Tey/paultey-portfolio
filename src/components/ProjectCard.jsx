@@ -88,9 +88,32 @@ function ProjectCard({ project, number }) {
               <DetailBlock title="Architecture" wide>
                 <p>{project.architecture}</p>
               </DetailBlock>
+              {project.designDecisions?.length > 0 && (
+                <DetailBlock title="Design decisions" wide>
+                  <ul>
+                    {project.designDecisions.map((decision) => (
+                      <li key={decision}>{decision}</li>
+                    ))}
+                  </ul>
+                </DetailBlock>
+              )}
               <DetailBlock title="Challenges">
                 <p>{project.challenges}</p>
               </DetailBlock>
+              {project.validation?.length > 0 && (
+                <DetailBlock title="Validation">
+                  <ul>
+                    {project.validation.map((check) => (
+                      <li key={check}>{check}</li>
+                    ))}
+                  </ul>
+                </DetailBlock>
+              )}
+              {project.outcome && (
+                <DetailBlock title="Outcome">
+                  <p>{project.outcome}</p>
+                </DetailBlock>
+              )}
               <DetailBlock title="Future improvements">
                 <p>{project.futureImprovements}</p>
               </DetailBlock>
