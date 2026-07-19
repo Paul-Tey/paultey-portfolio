@@ -6,6 +6,11 @@ React `ContactForm` -> `/api/contact` -> Cloudflare Pages Function -> Turnstile 
 
 The frontend contact form posts submissions to `/api/contact`. Cloudflare Pages routes that request to `functions/api/contact.js`, where the Turnstile token is verified before the message is sent through Resend to the configured Gmail inbox.
 
+The browser trims submitted values, validates required fields and email format,
+prevents duplicate in-flight submissions, and applies a request timeout. User
+input is preserved after a failed request and is reset only after confirmed
+delivery.
+
 ## Files Involved
 
 - `src/components/ContactForm.jsx` - renders the form, collects input, runs the Turnstile widget, and sends the request to `/api/contact`.
@@ -43,6 +48,10 @@ The frontend contact form posts submissions to `/api/contact`. Cloudflare Pages 
 - A Turnstile widget is created for `paultey.com` and `www.paultey.com`.
 - The frontend uses `VITE_TURNSTILE_SITE_KEY` to render the widget.
 - The backend validates submitted Turnstile tokens with `TURNSTILE_SECRET_KEY`.
+- The widget sends the `contact` action. The backend requires that action and
+  requires the verified Turnstile hostname to match the request hostname.
+- Narrow screens use Turnstile's compact presentation to avoid horizontal
+  overflow; wider layouts use the flexible presentation.
 
 ## Troubleshooting
 
@@ -50,8 +59,10 @@ The frontend contact form posts submissions to `/api/contact`. Cloudflare Pages 
 | --- | --- | --- |
 | `403` response | Cloudflare WAF is blocking the request. | Confirm the WAF exception allows `POST /api/contact` and is not broader than needed. |
 | `400` response | Validation failed or Turnstile verification failed. | Check required form fields, Turnstile token generation, and Turnstile domain configuration. |
+| `405` response | A client used an unsupported HTTP method. | Submit JSON with `POST /api/contact`. |
+| `415` response | The request did not use JSON. | Send `Content-Type: application/json`. |
 | `500` response | Missing environment variable. | Confirm all required Variables and Secrets are configured in Workers & Pages. |
-| `502` response | Resend sending failed or the function runtime hit an issue. | Check Resend API status, Resend logs, the Pages Function logs, and sender domain verification. |
+| `502` response | Turnstile or Resend was unavailable or rejected an upstream request. | Check provider status, Resend logs, the Pages Function logs, and sender domain verification. |
 | No email received | Message was sent but not visible in Gmail. | Check Resend logs, Gmail spam, filters, and the configured `CONTACT_TO_EMAIL` value. |
 
 ## Security Reminders
@@ -60,6 +71,8 @@ The frontend contact form posts submissions to `/api/contact`. Cloudflare Pages 
 - Never hardcode API keys, secret keys, or private values.
 - Keep the WAF exception limited to `POST /api/contact`.
 - Keep `reply_to` behavior so replies go to the form submitter.
+- Do not log form contents, email addresses, tokens, API responses, or secrets.
+- Keep the allowed reason values aligned between the frontend and backend.
 
 ## Maintenance Checklist
 

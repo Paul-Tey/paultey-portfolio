@@ -8,6 +8,10 @@ const MAX_LENGTHS = {
 
 const REQUIRED_FIELDS = ["name", "email", "reason", "subject", "message"];
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const HEADER_LINE_BREAK_PATTERN = /[\r\n]/;
+const TURNSTILE_ACTION = "contact";
+const TURNSTILE_TOKEN_MAX_LENGTH = 2048;
+const UPSTREAM_TIMEOUT_MS = 10000;
 const REASON_LABELS = {
   "technical-discussion": "Technical discussion",
   "project-collaboration": "Project collaboration",
@@ -15,11 +19,13 @@ const REASON_LABELS = {
   "learning-exchange": "Engineering learning exchange",
 };
 
-function jsonResponse(body, status = 200) {
+function jsonResponse(body, status = 200, additionalHeaders = {}) {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
       "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store",
+      ...additionalHeaders,
     },
   });
 }
@@ -34,6 +40,20 @@ async function parseJson(request) {
 
 function normalizeField(value) {
   return typeof value === "string" ? value.trim() : "";
+}
+
+async function fetchWithTimeout(url, options) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), UPSTREAM_TIMEOUT_MS);
+
+  try {
+    return await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }
 
 function validatePayload(payload) {
@@ -63,6 +83,17 @@ function validatePayload(payload) {
     return { error: "Please provide a valid email address.", fields };
   }
 
+  if (!Object.hasOwn(REASON_LABELS, fields.reason)) {
+    return { error: "Please select a valid contact reason.", fields };
+  }
+
+  if (
+    HEADER_LINE_BREAK_PATTERN.test(fields.name) ||
+    HEADER_LINE_BREAK_PATTERN.test(fields.subject)
+  ) {
+    return { error: "Name and subject must use a single line.", fields };
+  }
+
   for (const [fieldName, maxLength] of Object.entries(MAX_LENGTHS)) {
     if (fields[fieldName].length > maxLength) {
       return {
@@ -70,6 +101,10 @@ function validatePayload(payload) {
         fields,
       };
     }
+  }
+
+  if (fields.turnstileToken.length > TURNSTILE_TOKEN_MAX_LENGTH) {
+    return { error: "Verification token is invalid.", fields };
   }
 
   return { fields };
@@ -86,7 +121,7 @@ async function verifyTurnstile({ request, token, secretKey }) {
     formData.append("remoteip", remoteIp);
   }
 
-  const response = await fetch(
+  const response = await fetchWithTimeout(
     "https://challenges.cloudflare.com/turnstile/v0/siteverify",
     {
       method: "POST",
@@ -99,7 +134,13 @@ async function verifyTurnstile({ request, token, secretKey }) {
   }
 
   const result = await response.json().catch(() => null);
-  return Boolean(result?.success);
+  const expectedHostname = new URL(request.url).hostname;
+
+  return Boolean(
+    result?.success &&
+      result.hostname === expectedHostname &&
+      result.action === TURNSTILE_ACTION
+  );
 }
 
 function buildEmailHtml(fields, { reasonLabel, submittedAt }) {
@@ -145,7 +186,7 @@ async function sendEmail({ fields, env }) {
   const reasonLabel = getReasonLabel(fields.reason);
   const submittedAt = formatSubmittedAt();
 
-  const response = await fetch("https://api.resend.com/emails", {
+  const response = await fetchWithTimeout("https://api.resend.com/emails", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${env.RESEND_API_KEY}`,
@@ -175,7 +216,24 @@ async function sendEmail({ fields, env }) {
 
 export async function onRequest({ request, env }) {
   if (request.method !== "POST") {
-    return jsonResponse({ success: false, error: "Method not allowed." }, 405);
+    return jsonResponse(
+      { success: false, error: "Method not allowed." },
+      405,
+      { Allow: "POST" }
+    );
+  }
+
+  const contentType = request.headers
+    .get("Content-Type")
+    ?.split(";")[0]
+    .trim()
+    .toLowerCase();
+
+  if (contentType !== "application/json") {
+    return jsonResponse(
+      { success: false, error: "Content-Type must be application/json." },
+      415
+    );
   }
 
   const missingConfig = [
@@ -194,7 +252,7 @@ export async function onRequest({ request, env }) {
 
   const payload = await parseJson(request);
 
-  if (!payload || typeof payload !== "object") {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
     return jsonResponse({ success: false, error: "Invalid JSON body." }, 400);
   }
 
@@ -204,24 +262,55 @@ export async function onRequest({ request, env }) {
     return jsonResponse({ success: false, error: validation.error }, 400);
   }
 
-  const verified = await verifyTurnstile({
-    request,
-    token: validation.fields.turnstileToken,
-    secretKey: env.TURNSTILE_SECRET_KEY,
-  }).catch(() => false);
+  let verified;
+
+  try {
+    verified = await verifyTurnstile({
+      request,
+      token: validation.fields.turnstileToken,
+      secretKey: env.TURNSTILE_SECRET_KEY,
+    });
+  } catch {
+    console.error("Turnstile verification request failed.");
+    return jsonResponse(
+      {
+        success: false,
+        error: "Verification is temporarily unavailable. Please try again.",
+      },
+      502
+    );
+  }
 
   if (!verified) {
+    console.warn("Turnstile verification rejected a contact submission.");
     return jsonResponse({ success: false, error: "Verification failed." }, 400);
   }
 
-  const sent = await sendEmail({
-    fields: validation.fields,
-    env,
-  }).catch(() => false);
+  let sent;
+
+  try {
+    sent = await sendEmail({
+      fields: validation.fields,
+      env,
+    });
+  } catch {
+    console.error("Resend request failed.");
+    return jsonResponse(
+      {
+        success: false,
+        error: "Email delivery is temporarily unavailable. Please try again.",
+      },
+      502
+    );
+  }
 
   if (!sent) {
+    console.error("Resend rejected a contact email request.");
     return jsonResponse(
-      { success: false, error: "Message could not be sent." },
+      {
+        success: false,
+        error: "Email delivery is temporarily unavailable. Please try again.",
+      },
       502
     );
   }

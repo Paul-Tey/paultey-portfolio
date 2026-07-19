@@ -991,6 +991,7 @@ h2 {
 
 .turnstile-widget {
   min-height: 65px;
+  max-width: 100%;
 }
 
 .form-status {

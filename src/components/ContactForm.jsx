@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 
 const TURNSTILE_SCRIPT_SRC =
   "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+const REQUEST_TIMEOUT_MS = 12000;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const initialFormValues = {
   name: "",
@@ -16,6 +18,7 @@ function ContactForm() {
   const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
   const turnstileRef = useRef(null);
   const widgetIdRef = useRef(null);
+  const submissionInFlightRef = useRef(false);
   const [formValues, setFormValues] = useState(initialFormValues);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [submitStatus, setSubmitStatus] = useState("idle");
@@ -30,6 +33,11 @@ function ContactForm() {
       ...currentValues,
       [name]: value,
     }));
+
+    if (submitStatus === "error") {
+      setSubmitStatus("idle");
+      setSubmitMessage("");
+    }
   }
 
   function resetTurnstile() {
@@ -43,9 +51,19 @@ function ContactForm() {
   async function handleSubmit(event) {
     event.preventDefault();
 
+    if (submissionInFlightRef.current) {
+      return;
+    }
+
+    const normalizedValues = Object.fromEntries(
+      Object.entries(formValues).map(([fieldName, value]) => [
+        fieldName,
+        value.trim(),
+      ])
+    );
     const requiredFields = ["name", "email", "reason", "subject", "message"];
-    const missingRequiredField = requiredFields.some(
-      (fieldName) => !formValues[fieldName].trim()
+    const missingRequiredField = requiredFields.find(
+      (fieldName) => !normalizedValues[fieldName]
     );
 
     if (!turnstileAvailable) {
@@ -59,6 +77,14 @@ function ContactForm() {
     if (missingRequiredField) {
       setSubmitStatus("error");
       setSubmitMessage("Please complete all required fields before submitting.");
+      document.getElementById(`contact-${missingRequiredField}`)?.focus();
+      return;
+    }
+
+    if (!EMAIL_PATTERN.test(normalizedValues.email)) {
+      setSubmitStatus("error");
+      setSubmitMessage("Please enter a valid email address.");
+      document.getElementById("contact-email")?.focus();
       return;
     }
 
@@ -68,8 +94,15 @@ function ContactForm() {
       return;
     }
 
+    submissionInFlightRef.current = true;
     setSubmitStatus("loading");
     setSubmitMessage("Sending your message...");
+
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(
+      () => controller.abort(),
+      REQUEST_TIMEOUT_MS
+    );
 
     try {
       const response = await fetch("/api/contact", {
@@ -78,9 +111,10 @@ function ContactForm() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          ...formValues,
+          ...normalizedValues,
           turnstileToken,
         }),
+        signal: controller.signal,
       });
 
       const result = await response.json().catch(() => ({}));
@@ -98,9 +132,14 @@ function ContactForm() {
     } catch (error) {
       setSubmitStatus("error");
       setSubmitMessage(
-        error.message || "The message could not be sent. Please try again."
+        error.name === "AbortError"
+          ? "The request timed out. Please check your connection and try again."
+          : error.message || "The message could not be sent. Please try again."
       );
       resetTurnstile();
+    } finally {
+      window.clearTimeout(timeoutId);
+      submissionInFlightRef.current = false;
     }
   }
 
@@ -127,6 +166,10 @@ function ContactForm() {
 
       widgetIdRef.current = window.turnstile.render(turnstileRef.current, {
         sitekey: turnstileSiteKey,
+        action: "contact",
+        size: window.matchMedia("(max-width: 380px)").matches
+          ? "compact"
+          : "flexible",
         callback: (token) => {
           setTurnstileToken(token);
         },
@@ -172,7 +215,12 @@ function ContactForm() {
   }, [turnstileAvailable, turnstileSiteKey]);
 
   return (
-    <form className="contact-form" onSubmit={handleSubmit} noValidate>
+    <form
+      className="contact-form"
+      onSubmit={handleSubmit}
+      noValidate
+      aria-busy={isSubmitting}
+    >
       <div className="form-row">
         <label htmlFor="contact-name">Name</label>
         <input
