@@ -1,6 +1,4 @@
-function scrollToSection(sectionId) {
-  document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
-}
+import { scrollToSection } from "../utils/scrollToSection";
 
 function Footer() {
   const currentYear = new Date().getFullYear();
