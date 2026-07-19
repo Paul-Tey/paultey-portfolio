@@ -30,6 +30,7 @@ Live site: [https://paultey.com](https://paultey.com)
 - `src/components` - Reusable React components for the portfolio UI.
 - `src/data` - Data files that drive project content and technical notes.
 - `functions/api/contact.js` - Cloudflare Pages Function for the contact form backend.
+- `src/**/*.test.{js,jsx}` and `functions/**/*.test.js` - Focused frontend and backend behaviour tests.
 - `public` - Static assets served directly by Vite and Cloudflare Pages.
 - `docs/contact-form-backend.md` - Contact form backend setup and maintenance notes.
 
@@ -53,6 +54,24 @@ Build for production:
 npm run build
 ```
 
+Run the automated tests:
+
+```bash
+npm test
+```
+
+Run the lint checks:
+
+```bash
+npm run lint
+```
+
+## Continuous Integration
+
+Pull requests targeting `main` and pushes to `main` run a clean dependency
+installation, lint, automated tests, and a production build. The workflow does
+not use production contact-form secrets.
+
 ## Deployment
 
 The GitHub `main` branch deploys to Cloudflare Pages. After changes are merged into `main`, check the Cloudflare deployment status and verify the live site.
@@ -72,7 +91,7 @@ Secrets are stored in Cloudflare, not in source code.
 
 ## Maintenance Checklist
 
-- Run `npm run build` before pushing.
+- Run `npm run lint`, `npm test`, and `npm run build` before pushing.
 - Use feature branches and PRs.
 - Check Cloudflare deployment status after merge.
 - Test the contact form after backend changes.
