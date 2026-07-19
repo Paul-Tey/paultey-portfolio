@@ -166,6 +166,7 @@ main,
 }
 
 .navbar-logo {
+  min-height: 44px;
   padding: 0;
   display: inline-flex;
   align-items: center;
@@ -198,6 +199,7 @@ main,
 }
 
 .navbar-links button {
+  min-height: 44px;
   padding: 12px 15px;
   border-radius: var(--radius-sm);
   color: var(--text-soft);
@@ -632,8 +634,8 @@ h2 {
 }
 
 .filter-button {
-  min-height: 31px;
-  padding: 7px 11px;
+  min-height: 44px;
+  padding: 9px 12px;
   border: 1px solid transparent;
   border-radius: 6px;
   background: transparent;
@@ -808,6 +810,10 @@ h2 {
 }
 
 .project-links a {
+  min-height: 44px;
+  padding: 8px 0;
+  display: inline-flex;
+  align-items: center;
   color: var(--text-soft);
   transition: color 150ms ease;
 }
@@ -1053,6 +1059,7 @@ h2 {
 }
 
 .footer-brand button {
+  min-height: 44px;
   padding: 0;
   display: flex;
   align-items: center;
@@ -1076,7 +1083,10 @@ h2 {
 
 .footer-links a,
 .footer-links button {
+  min-height: 44px;
   padding: 10px 12px;
+  display: inline-flex;
+  align-items: center;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-soft);
@@ -1123,11 +1133,15 @@ h2 {
   to { opacity: 1; transform: none; }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
   .hero-lower {
     grid-template-columns: 1fr;
+    align-items: start;
+    gap: 2rem;
   }
+}
 
+@media (max-width: 900px) {
   .about-layout {
     margin-left: 0;
   }
@@ -1153,15 +1167,17 @@ h2 {
   .contact-aside {
     min-height: auto;
   }
-}
 
-@media (max-width: 720px) {
-  main,
-  .site-footer,
-  .navbar {
-    width: min(100% - 28px, var(--page-width));
+  .project-card {
+    grid-template-columns: 112px 1fr;
   }
 
+  .project-number {
+    padding: 22px 16px;
+  }
+}
+
+@media (max-width: 800px) {
   .navbar {
     top: 8px;
     margin-top: 8px;
@@ -1172,8 +1188,8 @@ h2 {
   }
 
   .nav-toggle {
-    width: 42px;
-    height: 42px;
+    width: 44px;
+    height: 44px;
     padding: 12px 10px;
     display: grid;
     align-content: center;
@@ -1186,6 +1202,15 @@ h2 {
     display: block;
     height: 1px;
     background: var(--text);
+    transition: transform 160ms ease;
+  }
+
+  .nav-toggle[aria-expanded="true"] > span:nth-child(2) {
+    transform: translateY(3.5px) rotate(45deg);
+  }
+
+  .nav-toggle[aria-expanded="true"] > span:nth-child(3) {
+    transform: translateY(-3.5px) rotate(-45deg);
   }
 
   .navbar-links {
@@ -1202,6 +1227,8 @@ h2 {
     background: rgba(7, 10, 15, 0.97);
     box-shadow: 0 18px 45px rgba(0,0,0,.35);
     backdrop-filter: blur(18px);
+    max-height: calc(100svh - 88px);
+    overflow-y: auto;
   }
 
   .navbar-links.open {
@@ -1211,6 +1238,23 @@ h2 {
   .navbar-links button {
     min-height: 46px;
     text-align: left;
+  }
+
+  .site-footer {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .footer-links {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 720px) {
+  main,
+  .site-footer,
+  .navbar {
+    width: min(100% - 28px, var(--page-width));
   }
 
   .hero {
@@ -1301,6 +1345,10 @@ h2 {
     flex-direction: column;
   }
 
+  .project-summary {
+    margin: 1rem 0 1.4rem;
+  }
+
   .project-meta,
   .project-detail-grid,
   .contact-form {
@@ -1317,6 +1365,7 @@ h2 {
   }
 
   .project-actions {
+    margin-top: 1.5rem;
     align-items: stretch;
     flex-direction: column;
   }
@@ -1325,17 +1374,48 @@ h2 {
     min-height: 35px;
   }
 
-  .site-footer {
-    grid-template-columns: 1fr;
-  }
-
-  .footer-links {
-    flex-wrap: wrap;
-  }
-
   .footer-bottom {
     gap: 1rem;
     flex-direction: column;
+  }
+}
+
+@media (max-width: 440px) {
+  :root {
+    --space-section: 4.75rem;
+  }
+
+  .hero {
+    padding-top: 4.75rem;
+  }
+
+  h1 {
+    font-size: clamp(2.85rem, 13.2vw, 3.55rem);
+    letter-spacing: -0.065em;
+    line-height: 0.96;
+  }
+
+  .project-card-main,
+  .contact-aside {
+    padding: 18px;
+  }
+
+  .contact-form {
+    padding: 20px;
+    gap: 16px;
+  }
+
+  .expanded-details {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+  }
+
+  .project-detail-grid {
+    gap: 8px;
+  }
+
+  .project-detail {
+    padding: 14px;
   }
 }
 
@@ -1355,15 +1435,6 @@ h2 {
   .hero-labels > span + span {
     border-top: 1px solid var(--border);
     border-left: 0;
-  }
-
-  .project-card-main,
-  .contact-aside {
-    padding: 20px;
-  }
-
-  .project-detail {
-    padding: 16px;
   }
 }
 
