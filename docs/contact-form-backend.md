@@ -7,9 +7,12 @@ React `ContactForm` -> `/api/contact` -> Cloudflare Pages Function -> Turnstile 
 The frontend contact form posts submissions to `/api/contact`. Cloudflare Pages routes that request to `functions/api/contact.js`, where the Turnstile token is verified before the message is sent through Resend to the configured Gmail inbox.
 
 The browser trims submitted values, validates required fields and email format,
-prevents duplicate in-flight submissions, and applies a request timeout. User
-input is preserved after a failed request and is reset only after confirmed
-delivery.
+prevents duplicate in-flight submissions, and stops waiting after 12 seconds.
+The Pages Function uses one eight-second deadline shared by Turnstile
+verification and Resend delivery, so each provider receives only the time
+remaining in that overall budget. This leaves a four-second browser-side margin
+for request transit and response handling. User input is preserved after a
+failed or timed-out request and is reset only after confirmed delivery.
 
 ## Files Involved
 
@@ -63,6 +66,7 @@ delivery.
 | `415` response | The request did not use JSON. | Send `Content-Type: application/json`. |
 | `500` response | Missing environment variable. | Confirm all required Variables and Secrets are configured in Workers & Pages. |
 | `502` response | Turnstile or Resend was unavailable or rejected an upstream request. | Check provider status, Resend logs, the Pages Function logs, and sender domain verification. |
+| `504` response | The shared backend deadline expired during Turnstile verification or Resend delivery. | Check provider status and Pages Function logs, then retry once the upstream service is responsive. |
 | No email received | Message was sent but not visible in Gmail. | Check Resend logs, Gmail spam, filters, and the configured `CONTACT_TO_EMAIL` value. |
 
 ## Security Reminders

@@ -11,13 +11,21 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const HEADER_LINE_BREAK_PATTERN = /[\r\n]/;
 const TURNSTILE_ACTION = "contact";
 const TURNSTILE_TOKEN_MAX_LENGTH = 2048;
-const UPSTREAM_TIMEOUT_MS = 10000;
+const BACKEND_REQUEST_TIMEOUT_MS = 8_000;
+const REQUEST_TIMEOUT_MESSAGE = "Contact request timed out. Please try again.";
 const REASON_LABELS = {
   "technical-discussion": "Technical discussion",
   "project-collaboration": "Project collaboration",
   internship: "Internship-related opportunity",
   "learning-exchange": "Engineering learning exchange",
 };
+
+class RequestDeadlineError extends Error {
+  constructor() {
+    super("Contact request deadline exceeded.");
+    this.name = "RequestDeadlineError";
+  }
+}
 
 function jsonResponse(body, status = 200, additionalHeaders = {}) {
   return new Response(JSON.stringify(body), {
@@ -42,15 +50,47 @@ function normalizeField(value) {
   return typeof value === "string" ? value.trim() : "";
 }
 
-async function fetchWithTimeout(url, options) {
+function requestTimeoutResponse() {
+  return jsonResponse(
+    { success: false, error: REQUEST_TIMEOUT_MESSAGE },
+    504
+  );
+}
+
+async function fetchBeforeDeadline(url, options, deadline) {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), UPSTREAM_TIMEOUT_MS);
+
+  return completeBeforeDeadline(
+    () =>
+      fetch(url, {
+        ...options,
+        signal: controller.signal,
+      }),
+    deadline,
+    () => controller.abort()
+  );
+}
+
+async function completeBeforeDeadline(operation, deadline, onDeadline) {
+  const remainingTime = deadline - Date.now();
+
+  if (remainingTime <= 0) {
+    throw new RequestDeadlineError();
+  }
+
+  let timeoutId;
+  const timeoutPromise = new Promise((_resolve, reject) => {
+    timeoutId = setTimeout(() => {
+      reject(new RequestDeadlineError());
+      onDeadline?.();
+    }, remainingTime);
+  });
 
   try {
-    return await fetch(url, {
-      ...options,
-      signal: controller.signal,
-    });
+    return await Promise.race([
+      Promise.resolve().then(operation),
+      timeoutPromise,
+    ]);
   } finally {
     clearTimeout(timeoutId);
   }
@@ -79,6 +119,19 @@ function validatePayload(payload) {
     return { error: "Verification is required.", fields };
   }
 
+  for (const [fieldName, maxLength] of Object.entries(MAX_LENGTHS)) {
+    if (fields[fieldName].length > maxLength) {
+      return {
+        error: `${fieldName} is too long.`,
+        fields,
+      };
+    }
+  }
+
+  if (fields.turnstileToken.length > TURNSTILE_TOKEN_MAX_LENGTH) {
+    return { error: "Verification token is invalid.", fields };
+  }
+
   if (!EMAIL_PATTERN.test(fields.email)) {
     return { error: "Please provide a valid email address.", fields };
   }
@@ -94,23 +147,10 @@ function validatePayload(payload) {
     return { error: "Name and subject must use a single line.", fields };
   }
 
-  for (const [fieldName, maxLength] of Object.entries(MAX_LENGTHS)) {
-    if (fields[fieldName].length > maxLength) {
-      return {
-        error: `${fieldName} is too long.`,
-        fields,
-      };
-    }
-  }
-
-  if (fields.turnstileToken.length > TURNSTILE_TOKEN_MAX_LENGTH) {
-    return { error: "Verification token is invalid.", fields };
-  }
-
   return { fields };
 }
 
-async function verifyTurnstile({ request, token, secretKey }) {
+async function verifyTurnstile({ request, token, secretKey, deadline }) {
   const formData = new FormData();
   formData.append("secret", secretKey);
   formData.append("response", token);
@@ -121,19 +161,23 @@ async function verifyTurnstile({ request, token, secretKey }) {
     formData.append("remoteip", remoteIp);
   }
 
-  const response = await fetchWithTimeout(
+  const response = await fetchBeforeDeadline(
     "https://challenges.cloudflare.com/turnstile/v0/siteverify",
     {
       method: "POST",
       body: formData,
-    }
+    },
+    deadline
   );
 
   if (!response.ok) {
     return false;
   }
 
-  const result = await response.json().catch(() => null);
+  const result = await completeBeforeDeadline(
+    () => response.json().catch(() => null),
+    deadline
+  );
   const expectedHostname = new URL(request.url).hostname;
 
   return Boolean(
@@ -182,39 +226,45 @@ function formatSubmittedAt(date = new Date()) {
   }).format(date);
 }
 
-async function sendEmail({ fields, env }) {
+async function sendEmail({ fields, env, deadline }) {
   const reasonLabel = getReasonLabel(fields.reason);
   const submittedAt = formatSubmittedAt();
 
-  const response = await fetchWithTimeout("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${env.RESEND_API_KEY}`,
-      "Content-Type": "application/json",
+  const response = await fetchBeforeDeadline(
+    "https://api.resend.com/emails",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${env.RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: env.CONTACT_FROM_EMAIL,
+        to: env.CONTACT_TO_EMAIL,
+        subject: `Portfolio contact: ${fields.subject}`,
+        reply_to: fields.email,
+        html: buildEmailHtml(fields, { reasonLabel, submittedAt }),
+        text: [
+          "New portfolio contact message",
+          `Name: ${fields.name}`,
+          `Email: ${fields.email}`,
+          `Reason: ${reasonLabel}`,
+          `Subject: ${fields.subject}`,
+          `Submitted: ${submittedAt}`,
+          "",
+          fields.message,
+        ].join("\n"),
+      }),
     },
-    body: JSON.stringify({
-      from: env.CONTACT_FROM_EMAIL,
-      to: env.CONTACT_TO_EMAIL,
-      subject: `Portfolio contact: ${fields.subject}`,
-      reply_to: fields.email,
-      html: buildEmailHtml(fields, { reasonLabel, submittedAt }),
-      text: [
-        "New portfolio contact message",
-        `Name: ${fields.name}`,
-        `Email: ${fields.email}`,
-        `Reason: ${reasonLabel}`,
-        `Subject: ${fields.subject}`,
-        `Submitted: ${submittedAt}`,
-        "",
-        fields.message,
-      ].join("\n"),
-    }),
-  });
+    deadline
+  );
 
   return response.ok;
 }
 
 export async function onRequest({ request, env }) {
+  const requestDeadline = Date.now() + BACKEND_REQUEST_TIMEOUT_MS;
+
   if (request.method !== "POST") {
     return jsonResponse(
       { success: false, error: "Method not allowed." },
@@ -269,8 +319,16 @@ export async function onRequest({ request, env }) {
       request,
       token: validation.fields.turnstileToken,
       secretKey: env.TURNSTILE_SECRET_KEY,
+      deadline: requestDeadline,
     });
-  } catch {
+  } catch (error) {
+    if (error instanceof RequestDeadlineError) {
+      console.error(
+        "Contact request deadline exceeded during Turnstile verification."
+      );
+      return requestTimeoutResponse();
+    }
+
     console.error("Turnstile verification request failed.");
     return jsonResponse(
       {
@@ -292,8 +350,14 @@ export async function onRequest({ request, env }) {
     sent = await sendEmail({
       fields: validation.fields,
       env,
+      deadline: requestDeadline,
     });
-  } catch {
+  } catch (error) {
+    if (error instanceof RequestDeadlineError) {
+      console.error("Contact request deadline exceeded during email delivery.");
+      return requestTimeoutResponse();
+    }
+
     console.error("Resend request failed.");
     return jsonResponse(
       {

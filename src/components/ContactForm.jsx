@@ -2,7 +2,9 @@ import { useEffect, useRef, useState } from "react";
 
 const TURNSTILE_SCRIPT_SRC =
   "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-const REQUEST_TIMEOUT_MS = 12000;
+// The backend stops after 8 seconds, leaving 4 seconds for network transit and
+// response handling before the browser gives up.
+const REQUEST_TIMEOUT_MS = 12_000;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const initialFormValues = {
