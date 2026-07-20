@@ -21,7 +21,7 @@ function Navbar() {
       <button
         className="navbar-logo"
         type="button"
-        aria-label="Paul Tey, back to top"
+        aria-label="PT Paul Tey, back to top"
         onClick={() => navigateTo("top")}
       >
         <span>PT</span>
