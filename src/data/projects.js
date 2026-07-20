@@ -33,8 +33,8 @@ export const projects = [
       "Protected contact flow using Turnstile and Resend"
     ],
     learningPoints: [
-      "Practiced keeping portfolio content structured as reusable data",
-      "Connected frontend deployment decisions to production behavior",
+      "Practised keeping portfolio content structured as reusable data",
+      "Connected frontend deployment decisions to production behaviour",
       "Improved awareness of how WAF rules, serverless functions, and secrets interact"
     ],
     technicalNotes: [
@@ -60,7 +60,7 @@ export const projects = [
     architecture:
       "STM32 firmware watches for trigger conditions, sends compact UART messages to the ESP01, and the ESP01 handles Wi-Fi access plus the Telegram Bot API request.",
     challenges:
-      "Keeping serial messages reliable while debugging across firmware behavior, Wi-Fi setup, and API responses.",
+      "Keeping serial messages reliable while debugging across firmware behaviour, Wi-Fi setup, and API responses.",
     futureImprovements:
       "Add a clearer command format, retry handling, message acknowledgements, and a small configuration flow for Wi-Fi and chat settings.",
     techStack: ["STM32", "ESP01", "Mbed Studio", "UART", "Telegram Bot API"],
@@ -72,13 +72,13 @@ export const projects = [
     learningPoints: [
       "Designed a small serial protocol between hardware and Wi-Fi modules",
       "Handled embedded-to-cloud integration with limited device resources",
-      "Practiced debugging across firmware, networking, and API layers"
+      "Practised debugging across firmware, networking, and API layers"
     ],
     technicalNotes: [
       "The STM32 sends UART triggers instead of handling Wi-Fi directly.",
       "The ESP01 owns Wi-Fi connection setup and Telegram notification delivery.",
       "This keeps the alert path lightweight for embedded-to-cloud messaging.",
-      "Future work should add retry and acknowledgement behavior so failed deliveries are visible."
+      "Future work should add retry and acknowledgement behaviour so failed deliveries are visible."
     ],
     links: {
       github: null,
@@ -118,7 +118,7 @@ export const projects = [
       "Explored hardware H.264 encoding using GStreamer"
     ],
     learningPoints: [
-      "Measured performance tradeoffs instead of relying on assumptions",
+      "Measured performance trade-offs instead of relying on assumptions",
       "Worked with OpenCV and GStreamer camera pipelines",
       "Learned how hardware encoding affects embedded video workloads"
     ],
@@ -150,16 +150,16 @@ export const projects = [
     keyFeatures: [
       "Read environmental inputs for farming-related conditions",
       "Triggered automated actions from threshold-based logic",
-      "Organized the prototype around practical hardware testing"
+      "Organised the prototype around practical hardware testing"
     ],
     learningPoints: [
-      "Practiced connecting sensor data to actuator behavior",
+      "Practised connecting sensor data to actuator behaviour",
       "Learned why calibration and repeatable tests matter in automation systems",
       "Improved debugging across wiring, firmware, and physical environment changes"
     ],
     technicalNotes: [
       "Threshold logic is useful for a prototype, but sensor calibration determines whether the action is meaningful.",
-      "Actuator behavior should include timing limits so outputs do not stay active longer than intended.",
+      "Actuator behaviour should include timing limits so outputs do not stay active longer than intended.",
       "A future version should log readings and actions to make tuning decisions easier to justify."
     ],
     links: {
@@ -175,7 +175,7 @@ export const projects = [
     summary:
       "A Python-based serial testing framework for detecting devices, running product-specific test cases, and logging results into CSV files.",
     problem:
-      "Manual serial testing is repetitive and difficult to trace, so the framework standardizes device detection, test execution, and result recording.",
+      "Manual serial testing is repetitive and difficult to trace, so the framework standardises device detection, test execution, and result recording.",
     architecture:
       "A Python CLI detects serial devices, loads product-specific test routines, executes them in a consistent order, and writes structured results to CSV.",
     challenges:
@@ -220,9 +220,9 @@ export const projects = [
     status: "Learning notes",
     role: "Embedded systems learner",
     summary:
-      "A focused learning lab for understanding how C2000 ePWM timer settings translate into PWM waveform behavior.",
+      "A focused learning lab for understanding how C2000 ePWM timer settings translate into PWM waveform behaviour.",
     problem:
-      "The register names are easy to memorize but harder to connect to actual waveform timing without worked examples and measurements.",
+      "The register names are easy to memorise but harder to connect to actual waveform timing without worked examples and measurements.",
     architecture:
       "Small firmware experiments adjust time-base and compare settings, then relate the configured values to expected PWM frequency and duty cycle.",
     challenges:
@@ -238,12 +238,12 @@ export const projects = [
     learningPoints: [
       "Learned how TBCLK and TBPRD define PWM timing",
       "Used CMPA to reason about duty cycle and compare events",
-      "Compared up-count, down-count, and up-down count behavior"
+      "Compared up-count, down-count, and up-down count behaviour"
     ],
     technicalNotes: [
       "TBCLK is the time-base clock that drives the ePWM counter.",
       "TBPRD sets the period reference used by the time-base counter.",
-      "CMPA controls the compare point used to shape duty cycle behavior.",
+      "CMPA controls the compare point used to shape duty cycle behaviour.",
       "Up-count, down-count, and up-down count modes change how period and compare events map to waveform timing."
     ],
     links: {
