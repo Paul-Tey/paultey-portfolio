@@ -44,6 +44,8 @@ const heroLabels = [
   "AI / Computer Vision",
 ];
 
+const RESUME_PATH = "/paul-tey-resume.pdf";
+
 function SectionIntro({ index, label, title, description }) {
   return (
     <div className="section-intro">
@@ -120,12 +122,11 @@ function App() {
                   View Projects <span aria-hidden="true">↘</span>
                 </button>
                 <a
-                  href="/Paul_Tey_Resume.pdf"
+                  href={RESUME_PATH}
                   className="button secondary-button"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  download="Paul-Tey-Resume.pdf"
                 >
-                  Resume / CV <span aria-hidden="true">↗</span>
+                  Download Resume (PDF) <span aria-hidden="true">↓</span>
                 </a>
                 <button
                   className="button text-button"
@@ -356,11 +357,10 @@ function App() {
                 </div>
                 <a
                   className="button secondary-button"
-                  href="/Paul_Tey_Resume.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={RESUME_PATH}
+                  download="Paul-Tey-Resume.pdf"
                 >
-                  Open Resume / CV <span aria-hidden="true">↗</span>
+                  Download Resume (PDF) <span aria-hidden="true">↓</span>
                 </a>
                 <p className="contact-privacy">
                   This form uses verification and does not expose private email

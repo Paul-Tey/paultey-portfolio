@@ -17,6 +17,22 @@ describe("experience", () => {
   });
 });
 
+describe("resume links", () => {
+  it("uses a stable PDF path and an explicit download filename", () => {
+    render(<App />);
+
+    const resumeLinks = screen.getAllByRole("link", {
+      name: "Download Resume (PDF)",
+    });
+
+    expect(resumeLinks).toHaveLength(2);
+    resumeLinks.forEach((link) => {
+      expect(link.getAttribute("href")).toBe("/paul-tey-resume.pdf");
+      expect(link.getAttribute("download")).toBe("Paul-Tey-Resume.pdf");
+    });
+  });
+});
+
 describe("project filtering", () => {
   it("shows only projects from the selected category and restores all projects", async () => {
     const user = userEvent.setup();
