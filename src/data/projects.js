@@ -30,6 +30,7 @@ export const projects = [
     ],
     validation: [
       "Vitest and Testing Library cover navigation, filtering, project expansion, accessible contact states and server-side failure paths.",
+      "A local Playwright smoke suite checks the production build, mobile navigation, static assets and the real custom 404 response without sending contact messages.",
       "Browser checks exercised navigation, project details, contact states and responsive layouts at desktop, tablet and mobile widths.",
       "Mocked Turnstile and Resend responses test server-side validation without contacting live services.",
       "Local mobile and desktop Lighthouse audits recorded 100 in Performance, Accessibility, Best Practices and SEO; these are laboratory results rather than real-user measurements."
@@ -47,7 +48,8 @@ export const projects = [
       "Resend",
       "GitHub Actions",
       "Vitest",
-      "Testing Library"
+      "Testing Library",
+      "Playwright"
     ],
     keyFeatures: [
       "Single-page portfolio with smooth section navigation",
