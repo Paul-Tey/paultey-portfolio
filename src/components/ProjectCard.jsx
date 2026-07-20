@@ -85,6 +85,15 @@ function ProjectCard({ project, number }) {
               <DetailBlock title="Role">
                 <p>{project.role}</p>
               </DetailBlock>
+              {project.constraints?.length > 0 && (
+                <DetailBlock title="Constraints">
+                  <ul>
+                    {project.constraints.map((constraint) => (
+                      <li key={constraint}>{constraint}</li>
+                    ))}
+                  </ul>
+                </DetailBlock>
+              )}
               <DetailBlock title="Architecture" wide>
                 <p>{project.architecture}</p>
               </DetailBlock>
@@ -97,11 +106,20 @@ function ProjectCard({ project, number }) {
                   </ul>
                 </DetailBlock>
               )}
+              {project.implementationDetails?.length > 0 && (
+                <DetailBlock title="Implementation details" wide>
+                  <ul>
+                    {project.implementationDetails.map((detail) => (
+                      <li key={detail}>{detail}</li>
+                    ))}
+                  </ul>
+                </DetailBlock>
+              )}
               <DetailBlock title="Challenges">
                 <p>{project.challenges}</p>
               </DetailBlock>
               {project.validation?.length > 0 && (
-                <DetailBlock title="Validation">
+                <DetailBlock title="Validation and testing">
                   <ul>
                     {project.validation.map((check) => (
                       <li key={check}>{check}</li>
@@ -110,7 +128,7 @@ function ProjectCard({ project, number }) {
                 </DetailBlock>
               )}
               {project.outcome && (
-                <DetailBlock title="Outcome">
+                <DetailBlock title="Results">
                   <p>{project.outcome}</p>
                 </DetailBlock>
               )}
@@ -124,7 +142,7 @@ function ProjectCard({ project, number }) {
                   ))}
                 </ul>
               </DetailBlock>
-              <DetailBlock title="Learning points">
+              <DetailBlock title="Lessons learnt">
                 <ul>
                   {project.learningPoints.map((point) => (
                     <li key={point}>{point}</li>

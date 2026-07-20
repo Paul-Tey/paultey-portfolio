@@ -3,6 +3,20 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import App from "./App";
 
+describe("experience", () => {
+  it("renders a concise experience record without private contact details", () => {
+    render(<App />);
+
+    expect(
+      screen.getByRole("heading", { name: "Engineering Intern" })
+    ).toBeTruthy();
+    expect(screen.getByText("Nexwah Technology")).toBeTruthy();
+    expect(screen.getByText("2023 · 20-week internship")).toBeTruthy();
+    expect(screen.getByText("Hardware/software integration")).toBeTruthy();
+    expect(document.body.textContent).not.toContain("@gmail.com");
+  });
+});
+
 describe("project filtering", () => {
   it("shows only projects from the selected category and restores all projects", async () => {
     const user = userEvent.setup();

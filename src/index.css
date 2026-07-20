@@ -611,6 +611,134 @@ h2 {
   font-size: 11px;
 }
 
+.experience-list {
+  display: grid;
+  gap: 12px;
+}
+
+.experience-card {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.42fr) minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background:
+    linear-gradient(140deg, rgba(53, 231, 255, 0.035), transparent 48%),
+    var(--surface);
+}
+
+.experience-heading,
+.experience-body {
+  padding: clamp(1.4rem, 3vw, 2.25rem);
+}
+
+.experience-heading {
+  border-right: 1px solid var(--border);
+}
+
+.experience-heading p,
+.experience-heading span,
+.experience-detail-grid h4 {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.experience-heading p {
+  margin: 0 0 1.8rem;
+  color: var(--cyan);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.experience-heading h3 {
+  margin: 0 0 0.7rem;
+  font-size: clamp(1.55rem, 2.5vw, 2.1rem);
+  letter-spacing: -0.04em;
+  line-height: 1.08;
+}
+
+.experience-heading span {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.experience-summary {
+  max-width: 760px;
+  margin: 0 0 2rem;
+  color: var(--text-soft);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.experience-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) repeat(2, minmax(180px, 0.75fr));
+  gap: 10px;
+}
+
+.experience-detail-grid > section {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.experience-detail-grid h4 {
+  margin: 0 0 12px;
+  color: var(--cyan);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+}
+
+.experience-detail-grid h4:not(:first-child) {
+  margin-top: 20px;
+}
+
+.experience-detail-grid ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.experience-detail-grid li {
+  position: relative;
+  padding: 0 0 9px 17px;
+  color: var(--text-soft);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.experience-detail-grid li::before {
+  position: absolute;
+  top: 9px;
+  left: 0;
+  width: 5px;
+  height: 1px;
+  background: var(--violet);
+  content: "";
+}
+
+.experience-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.experience-tags span {
+  max-width: 100%;
+  padding: 6px 8px;
+  border: 1px solid rgba(155, 123, 255, 0.22);
+  border-radius: 5px;
+  background: var(--violet-soft);
+  color: #c7b8ff;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  overflow-wrap: anywhere;
+}
+
 .filter-bar {
   margin-bottom: 1.2rem;
   padding: 14px 0;
@@ -1161,6 +1289,23 @@ h2 {
     grid-column: 1 / -1;
   }
 
+  .experience-card {
+    grid-template-columns: 1fr;
+  }
+
+  .experience-heading {
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .experience-detail-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .experience-detail-grid > section:first-child {
+    grid-column: 1 / -1;
+  }
+
   .contact-layout {
     grid-template-columns: 1fr;
   }
@@ -1304,8 +1449,13 @@ h2 {
 
   .about-layout,
   .about-facts,
-  .skills-grid {
+  .skills-grid,
+  .experience-detail-grid {
     grid-template-columns: 1fr;
+  }
+
+  .experience-detail-grid > section:first-child {
+    grid-column: auto;
   }
 
   .about-facts > div + div {

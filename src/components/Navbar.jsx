@@ -4,6 +4,7 @@ import { scrollToSection } from "../utils/scrollToSection";
 const navItems = [
   { label: "About", sectionId: "about" },
   { label: "Skills", sectionId: "skills" },
+  { label: "Experience", sectionId: "experience" },
   { label: "Projects", sectionId: "projects" },
   { label: "Contact", sectionId: "contact" },
 ];

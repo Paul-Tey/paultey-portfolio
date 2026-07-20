@@ -27,4 +27,23 @@ describe("Navbar", () => {
     });
     expect(toggle.getAttribute("aria-expanded")).toBe("false");
   });
+
+  it("includes keyboard-operable navigation to the experience section", async () => {
+    const user = userEvent.setup();
+    document.body.innerHTML = '<section id="experience"></section>';
+    const experienceSection = document.getElementById("experience");
+    experienceSection.scrollIntoView = vi.fn();
+
+    render(<Navbar />);
+
+    const experienceControl = screen.getByRole("button", {
+      name: /Experience/,
+    });
+    experienceControl.focus();
+    await user.keyboard("{Enter}");
+
+    expect(experienceSection.scrollIntoView).toHaveBeenCalledWith({
+      behavior: "smooth",
+    });
+  });
 });

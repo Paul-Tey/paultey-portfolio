@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { experience } from "./data/experience";
 import { projects } from "./data/projects";
 import ContactForm from "./components/ContactForm";
 import Footer from "./components/Footer";
@@ -171,7 +172,7 @@ function App() {
                 <p>
                   I enjoy debugging across wiring, firmware, data pipelines and
                   interfaces. This portfolio documents that learning through
-                  grounded projects, technical notes and honest tradeoffs.
+                  grounded projects, technical notes and honest trade-offs.
                 </p>
               </div>
 
@@ -221,9 +222,72 @@ function App() {
         </Reveal>
 
         <Reveal>
-          <section className="section projects-section" id="projects">
+          <section className="section experience-section" id="experience">
             <SectionIntro
               index="03"
+              label="Experience"
+              title="Engineering in a working team."
+              description="A concise record of practical responsibilities, tools and habits developed in an engineering environment."
+            />
+
+            <div className="experience-list">
+              {experience.map((item) => (
+                <article className="experience-card" key={item.organisation}>
+                  <header className="experience-heading">
+                    <p>{item.period}</p>
+                    <h3>{item.role}</h3>
+                    <span>{item.organisation}</span>
+                  </header>
+
+                  <div className="experience-body">
+                    <p className="experience-summary">{item.summary}</p>
+
+                    <div className="experience-detail-grid">
+                      <section>
+                        <h4>Responsibilities</h4>
+                        <ul>
+                          {item.responsibilities.map((responsibility) => (
+                            <li key={responsibility}>{responsibility}</li>
+                          ))}
+                        </ul>
+                      </section>
+
+                      <section>
+                        <h4>Technologies</h4>
+                        <div className="experience-tags">
+                          {item.technologies.map((technology) => (
+                            <span key={technology}>{technology}</span>
+                          ))}
+                        </div>
+
+                        <h4>Engineering practices</h4>
+                        <div className="experience-tags">
+                          {item.practices.map((practice) => (
+                            <span key={practice}>{practice}</span>
+                          ))}
+                        </div>
+                      </section>
+
+                      <section>
+                        <h4>Skills developed</h4>
+                        <ul>
+                          {item.skillsDeveloped.map((skill) => (
+                            <li key={skill}>{skill}</li>
+                          ))}
+                        </ul>
+                      </section>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        </Reveal>
+
+        <Reveal>
+          <section className="section projects-section" id="projects">
+            <SectionIntro
+              index="04"
               label="Selected work"
               title="Systems in practice."
               description="Embedded builds, software tools and engineering investigations—each documented with the decisions and lessons behind it."
@@ -270,7 +334,7 @@ function App() {
         <Reveal>
           <section className="section contact-section" id="contact">
             <SectionIntro
-              index="04"
+              index="05"
               label="Contact"
               title="Let’s build something useful."
               description="Open to technical discussions, project collaboration, internship-related opportunities and engineering learning exchanges."

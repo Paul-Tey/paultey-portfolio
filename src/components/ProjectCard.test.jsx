@@ -15,8 +15,14 @@ describe("ProjectCard", () => {
     await user.click(toggle);
 
     expect(screen.getByRole("heading", { name: "Design decisions" })).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "Validation" })).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "Outcome" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Constraints" })).toBeTruthy();
+    expect(
+      screen.getByRole("heading", { name: "Implementation details" })
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("heading", { name: "Validation and testing" })
+    ).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Results" })).toBeTruthy();
 
     const closeToggle = screen.getByRole("button", { name: "Close Details" });
     expect(closeToggle.getAttribute("aria-expanded")).toBe("true");
@@ -24,6 +30,6 @@ describe("ProjectCard", () => {
 
     await user.click(closeToggle);
 
-    expect(screen.queryByRole("heading", { name: "Outcome" })).toBeNull();
+    expect(screen.queryByRole("heading", { name: "Results" })).toBeNull();
   });
 });
