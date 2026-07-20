@@ -4,6 +4,10 @@
 
 Analytics is optional and is not enabled by repository code.
 
+The July 2026 review retained this documentation-only approach. No dashboard
+setting, runtime script, package, cookie or repository token was added. The
+one-click Pages integration is sufficient if the site owner later opts in.
+
 If basic traffic and real-user performance data would be useful, prefer the
 Cloudflare Pages Web Analytics integration. Cloudflare describes Web Analytics
 as privacy-first and cookie-free, and Pages can inject the beacon after it is

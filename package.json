@@ -9,6 +9,7 @@
     "check:assets": "node scripts/verify-static-assets.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
+    "render:social": "node scripts/render-social-preview.mjs",
     "test": "vitest run",
     "test:smoke": "node scripts/run-smoke-tests.mjs"
   },

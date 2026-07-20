@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <title>Paul Tey Computer Engineering portfolio social preview</title>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#05070b"/>
+      <stop offset="1" stop-color="#0b1020"/>
+    </linearGradient>
+    <radialGradient id="cyan-glow" cx="0" cy="0" r="1" gradientTransform="translate(1020 70) rotate(136) scale(520 430)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2ee5ff" stop-opacity=".23"/>
+      <stop offset="1" stop-color="#2ee5ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="violet-glow" cx="0" cy="0" r="1" gradientTransform="translate(240 610) rotate(-42) scale(560 390)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8257ff" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#8257ff" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" fill="none" stroke="#a9bad2" stroke-opacity=".07"/>
+    </pattern>
+    <linearGradient id="accent" x1="216" y1="206" x2="954" y2="438" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2ee5ff"/>
+      <stop offset="1" stop-color="#a887ff"/>
+    </linearGradient>
+    <filter id="soft-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#background)"/>
+  <rect width="1200" height="630" fill="url(#cyan-glow)"/>
+  <rect width="1200" height="630" fill="url(#violet-glow)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <rect x="36" y="36" width="1128" height="558" rx="24" fill="#0c111d" fill-opacity=".72" stroke="#acc2e1" stroke-opacity=".2"/>
+
+  <path d="M102 172H214L246 140H352" fill="none" stroke="#2ee5ff" stroke-opacity=".45" stroke-width="2"/>
+  <path d="M848 486H962L994 454H1098" fill="none" stroke="#a887ff" stroke-opacity=".5" stroke-width="2"/>
+  <circle cx="102" cy="172" r="5" fill="#2ee5ff"/>
+  <circle cx="1098" cy="454" r="5" fill="#a887ff"/>
+  <circle cx="102" cy="172" r="16" fill="#2ee5ff" fill-opacity=".2" filter="url(#soft-glow)"/>
+
+  <g transform="translate(88 82)">
+    <rect width="76" height="76" rx="18" fill="#111a29" stroke="#2ee5ff" stroke-opacity=".55"/>
+    <text x="38" y="50" text-anchor="middle" fill="#f4f7ff" font-family="Arial, sans-serif" font-size="31" font-weight="800" letter-spacing="-2">PT</text>
+  </g>
+
+  <text x="190" y="116" fill="#2ee5ff" font-family="Consolas, monospace" font-size="17" font-weight="700" letter-spacing="3.2">ENGINEERING SYSTEMS LAB · SINGAPORE</text>
+  <text x="88" y="280" fill="#f4f7ff" font-family="Arial, sans-serif" font-size="78" font-weight="800" letter-spacing="-4.5">HARDWARE / SOFTWARE</text>
+  <text x="88" y="372" fill="url(#accent)" font-family="Arial, sans-serif" font-size="78" font-weight="800" letter-spacing="-4.5">/ INTELLIGENCE</text>
+  <text x="91" y="438" fill="#aab7cc" font-family="Arial, sans-serif" font-size="26" font-weight="500">Paul Tey — Computer Engineering Portfolio</text>
+
+  <g fill="#dce7f6" font-family="Consolas, monospace" font-size="15" font-weight="700" letter-spacing="1.5">
+    <text x="91" y="536">EMBEDDED SYSTEMS</text>
+    <text x="319" y="536">AUTOMATION</text>
+    <text x="489" y="536">SOFTWARE</text>
+    <text x="625" y="536">COMPUTER VISION</text>
+  </g>
+  <text x="1098" y="536" text-anchor="end" fill="#7f91aa" font-family="Consolas, monospace" font-size="15" letter-spacing="1.8">PAULTEY.COM</text>
+</svg>
