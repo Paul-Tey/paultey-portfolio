@@ -10,6 +10,11 @@ export const projects = [
       "Visitors needed a clear way to understand the work across hardware and software, while the site still had to support reliable deployment and a contact route that does not expose private email details.",
     architecture:
       "React and Vite build a static single-page app that deploys through Cloudflare Pages, with a serverless contact endpoint using Turnstile validation and Resend email delivery.",
+    constraints: [
+      "Keep the main site static and fast while isolating contact-form secrets and provider calls in a server-side function.",
+      "Preserve keyboard access, reduced-motion support and readable layouts from desktop through 360-pixel mobile screens.",
+      "Run repeatable pull-request checks without exposing production Turnstile or Resend secrets."
+    ],
     challenges:
       "Keeping deployment, security rules, and contact-form behaviour understandable while investigating production-only 403 and 502 responses.",
     designDecisions: [
@@ -17,20 +22,41 @@ export const projects = [
       "Used a static frontend with a serverless function only for the contact path, avoiding a larger application server.",
       "Kept Turnstile and Resend secrets in the server-side environment; the browser receives only the public widget key."
     ],
+    implementationDetails: [
+      "Data-driven React components render filters, expandable project details and hash-free section navigation.",
+      "A Cloudflare Pages Function validates JSON, verifies the Turnstile hostname and action, and sends accepted messages through Resend within one bounded deadline.",
+      "GitHub Actions uses a clean npm install to run ESLint, Vitest and the production Vite build for pull requests to main.",
+      "A top-level static 404 page gives Cloudflare Pages a dedicated not-found response without introducing client-side routing."
+    ],
     validation: [
-      "Checked lint and production builds before reviewed changes.",
-      "Exercised navigation, project filters, expanded details, contact states, and responsive layouts in the browser.",
-      "Tested server-side validation with mocked Turnstile and Resend responses rather than contacting live services."
+      "Vitest and Testing Library cover navigation, filtering, project expansion, accessible contact states and server-side failure paths.",
+      "A local Playwright smoke suite checks the production build, mobile navigation, static assets and the real custom 404 response without sending contact messages.",
+      "Browser checks exercised navigation, project details, contact states and responsive layouts at desktop, tablet and mobile widths.",
+      "Mocked Turnstile and Resend responses test server-side validation without contacting live services.",
+      "Earlier local mobile and desktop Lighthouse audits recorded 100 in every category; a July 2026 desktop rerun recorded 97 Performance and 100 for Accessibility, Best Practices and SEO. These are laboratory results rather than real-user measurements."
     ],
     outcome:
       "Delivered the live portfolio and a protected contact path that keeps private mail credentials outside browser code.",
     futureImprovements:
       "Add verified case-study media and keep automated checks and production troubleshooting notes aligned with future changes.",
-    techStack: ["React", "Vite", "Cloudflare Pages", "Turnstile", "Resend"],
+    techStack: [
+      "React",
+      "Vite",
+      "Cloudflare Pages",
+      "Pages Functions",
+      "Turnstile",
+      "Resend",
+      "GitHub Actions",
+      "Vitest",
+      "Testing Library",
+      "Playwright"
+    ],
     keyFeatures: [
       "Single-page portfolio with smooth section navigation",
       "Project cards with expandable technical details",
-      "Protected contact flow using Turnstile and Resend"
+      "Protected contact flow using Turnstile and Resend",
+      "Responsive, keyboard-accessible interface with reduced-motion support",
+      "Automated validation and a custom Cloudflare Pages 404 response"
     ],
     learningPoints: [
       "Practised keeping portfolio content structured as reusable data",
@@ -96,12 +122,21 @@ export const projects = [
       "Camera pipelines can behave differently depending on capture method, encoder, and output format, so the project compared practical options on embedded GPU hardware.",
     architecture:
       "Python scripts run capture and output tests using OpenCV and GStreamer, then compare practical metrics such as runtime, CPU load, and output file size.",
+    constraints: [
+      "Run camera and encoding experiments on the Jetson Nano's embedded CPU and GPU resources.",
+      "Keep capture conditions and encoder settings consistent enough for useful comparisons."
+    ],
     challenges:
       "Understanding how capture backends, encoder choices, and hardware acceleration affected the same camera workload.",
     designDecisions: [
       "Used OpenCV for rapid camera experiments and GStreamer when more direct pipeline and encoder control was needed.",
       "Compared CPU use, output size, runtime, and recording stability together instead of treating one metric as the answer.",
       "Included hardware H.264 encoding as a practical option for reducing CPU pressure on the Jetson Nano."
+    ],
+    implementationDetails: [
+      "Used OpenCV for straightforward capture experiments and GStreamer for explicit pipeline and encoder control.",
+      "Recorded runtime, CPU load and output file size as practical comparison points.",
+      "Investigated hardware-assisted H.264 output without treating one metric as a complete performance result."
     ],
     validation: [
       "Ran camera capture and output tests through both OpenCV and GStreamer paths.",
@@ -178,12 +213,23 @@ export const projects = [
       "Manual serial testing is repetitive and difficult to trace, so the framework standardises device detection, test execution, and result recording.",
     architecture:
       "A Python CLI detects serial devices, loads product-specific test routines, executes them in a consistent order, and writes structured results to CSV.",
+    constraints: [
+      "Keep common serial connection and reporting logic reusable while allowing each product to define its own checks.",
+      "Make pass or fail state understandable after a device is disconnected.",
+      "Treat connection failures and malformed responses explicitly before longer unattended runs are considered."
+    ],
     challenges:
       "Designing shared serial tooling that stays reusable while still allowing each product to define its own checks.",
     designDecisions: [
       "Placed port discovery, connection setup, result formatting, and CSV output in the shared framework.",
       "Kept product-specific checks separate from common serial utilities so new test routines do not duplicate connection code.",
       "Used explicit pass or fail output because results may be reviewed after a device is disconnected."
+    ],
+    implementationDetails: [
+      "The command-line workflow discovers valid serial devices before loading product-specific test functions.",
+      "Shared utilities own connection setup, execution flow, result formatting and CSV output.",
+      "Product-specific routines stay separate so additional checks do not duplicate common serial code.",
+      "Result files provide a traceable record alongside the immediate pass or fail presentation."
     ],
     validation: [
       "Exercised automatic detection of valid serial devices.",

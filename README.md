@@ -1,104 +1,91 @@
 # Paul Tey Portfolio Website
 
-A personal technical portfolio for showcasing Computer Engineering projects, embedded systems, IoT, automation, software, technical notes, and contact form backend.
+A React portfolio documenting Computer Engineering projects across embedded systems, software, automation, IoT and computer vision.
 
 Live site: [https://paultey.com](https://paultey.com)
 
-## Tech Stack
+## Architecture
 
-- React
-- Vite
-- Cloudflare Pages
-- Cloudflare Pages Functions
-- Cloudflare Turnstile
-- Resend
-- GitHub
+Vite builds the React single-page interface as static assets for Cloudflare Pages. Project and experience content is held in `src/data`, while reusable presentation and interaction code lives in `src/components`.
 
-## Main Features
+The only server-side route is `functions/api/contact.js`. It validates contact requests, verifies Cloudflare Turnstile and calls Resend without exposing backend secrets to the browser. The public frontend receives only the Turnstile site key.
 
-- Responsive single-page portfolio
-- Hash-free smooth navigation
-- Project cards with category filters
-- Expandable project details
-- Data-driven technical notes
-- Resume PDF link
-- Contact form with Turnstile and Resend backend
-- Cloudflare WAF protection
+## Technology
 
-## Project Structure
+- React and Vite
+- Cloudflare Pages and Pages Functions
+- Cloudflare Turnstile and Resend
+- Vitest and Testing Library
+- Playwright production-build smoke tests
+- GitHub Actions
 
-- `src/components` - Reusable React components for the portfolio UI.
-- `src/data` - Data files that drive project content and technical notes.
-- `functions/api/contact.js` - Cloudflare Pages Function for the contact form backend.
-- `src/**/*.test.{js,jsx}` and `functions/**/*.test.js` - Focused frontend and backend behaviour tests.
-- `public` - Static assets served directly by Vite and Cloudflare Pages.
-- `docs/contact-form-backend.md` - Contact form backend setup and maintenance notes.
-- `docs/analytics.md` - Optional privacy-conscious analytics decision and manual setup.
+## Main features
 
-## Local Development
+- Responsive, keyboard-accessible single-page portfolio with reduced-motion support
+- Hash-free navigation across About, Skills, Experience, Projects and Contact
+- Filterable, expandable engineering case studies
+- Downloadable PDF resume with an asset-integrity check
+- Protected contact workflow with validation, timeouts and accessible states
+- Custom 404 response, canonical metadata, JSON-LD and a social preview
 
-Install dependencies:
+## Repository structure
+
+- `src/components` — reusable React components.
+- `src/data` — project and experience content.
+- `functions/api/contact.js` — Cloudflare Pages contact Function.
+- `public` — production static assets, including the 404 page and resume.
+- `scripts` — static-asset checks and local production-test utilities.
+- `tests/smoke` — Playwright browser smoke tests.
+- `.github/workflows/validate.yml` — pull-request and main-branch validation.
+- `docs` — detailed operational and maintenance guidance.
+
+## Developer workflow
+
+Install the locked dependency tree:
 
 ```bash
-npm install
+npm ci
 ```
 
-Run the local development server:
+Run the development server:
 
 ```bash
 npm run dev
 ```
 
-Build for production:
-
-```bash
-npm run build
-```
-
-Run the automated tests:
-
-```bash
-npm test
-```
-
-Run the lint checks:
+Run routine validation:
 
 ```bash
 npm run lint
+npm run check:assets
+npm test
+npm run build
 ```
 
-## Continuous Integration
+Playwright is a local pre-release check rather than part of normal pull-request CI. See [production-build smoke testing](docs/smoke-testing.md) for browser installation and the safe test command.
 
-Pull requests targeting `main` and pushes to `main` run a clean dependency
-installation, lint, automated tests, and a production build. The workflow does
-not use production contact-form secrets.
+## Continuous integration
 
-## Deployment
+Pull requests targeting `main` and pushes to `main` run `npm ci`, lint, the static-asset check, unit/component tests and a production build. The workflow has read-only repository permissions, cancels superseded runs and does not use production contact secrets.
 
-The GitHub `main` branch deploys to Cloudflare Pages. After changes are merged into `main`, check the Cloudflare deployment status and verify the live site.
+## Deployment and operations
 
-## Contact Form Backend
+Cloudflare Pages deploys the `main` branch. After each production deployment, work through the reusable [deployment verification checklist](docs/deployment-verification.md). A real contact message is an approval-gated production check, not an automated test.
 
-Backend setup and operational details are documented in [docs/contact-form-backend.md](docs/contact-form-backend.md).
+Detailed guidance:
 
-Secrets are stored in Cloudflare, not in source code.
+- [Contact backend and environment-variable names](docs/contact-form-backend.md)
+- [Deployment verification checklist](docs/deployment-verification.md)
+- [Resume replacement workflow](docs/resume-workflow.md)
+- [Playwright smoke testing](docs/smoke-testing.md)
+- [SEO and asset maintenance](docs/seo-and-assets.md)
+- [Project evidence and confidentiality boundaries](docs/project-evidence.md)
+- [Optional Cloudflare Web Analytics decision](docs/analytics.md)
 
-## Analytics
+## Security boundaries
 
-No analytics script or site token is committed. The optional Cloudflare Pages
-Web Analytics setup and privacy boundaries are documented in
-[docs/analytics.md](docs/analytics.md).
-
-## Security Notes
-
-- Do not commit `.env` or `.dev.vars`.
-- Do not hardcode API keys.
-- Keep the WAF exception limited to `/api/contact`.
-- Keep the Turnstile secret server-side only.
-
-## Maintenance Checklist
-
-- Run `npm run lint`, `npm test`, and `npm run build` before pushing.
-- Use feature branches and PRs.
-- Check Cloudflare deployment status after merge.
-- Test the contact form after backend changes.
+- Do not commit `.env`, `.dev.vars`, API keys, tokens or private contact details.
+- Keep the Cloudflare WAF exception limited to `POST /api/contact`.
+- Keep Turnstile and Resend secrets server-side.
+- Do not log message contents, submitted email addresses, verification tokens or raw provider errors.
+- Keep public project claims traceable to non-confidential evidence.

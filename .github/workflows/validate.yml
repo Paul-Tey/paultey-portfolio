@@ -37,6 +37,9 @@ jobs:
       - name: Run lint
         run: npm run lint
 
+      - name: Verify static assets
+        run: npm run check:assets
+
       - name: Run tests
         run: npm test
 
