@@ -33,7 +33,7 @@ export const projects = [
       "A local Playwright smoke suite checks the production build, mobile navigation, static assets and the real custom 404 response without sending contact messages.",
       "Browser checks exercised navigation, project details, contact states and responsive layouts at desktop, tablet and mobile widths.",
       "Mocked Turnstile and Resend responses test server-side validation without contacting live services.",
-      "Local mobile and desktop Lighthouse audits recorded 100 in Performance, Accessibility, Best Practices and SEO; these are laboratory results rather than real-user measurements."
+      "Earlier local mobile and desktop Lighthouse audits recorded 100 in every category; a July 2026 desktop rerun recorded 97 Performance and 100 for Accessibility, Best Practices and SEO. These are laboratory results rather than real-user measurements."
     ],
     outcome:
       "Delivered the live portfolio and a protected contact path that keeps private mail credentials outside browser code.",

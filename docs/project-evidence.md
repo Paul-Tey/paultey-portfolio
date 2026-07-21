@@ -11,7 +11,7 @@ The portfolio case study is directly supported by this repository:
 - `.github/workflows/validate.yml` supports the CI description.
 - Vitest, Testing Library and Playwright files support the stated automated checks.
 - accessibility, responsive-layout and custom 404 behaviour are visible in the application code and tests.
-- the recorded Lighthouse scores remain explicitly described as local laboratory results, not field data.
+- the Lighthouse record distinguishes earlier all-100 audits from the July 2026 desktop rerun (97 Performance and 100 in the other categories), and identifies all of them as local laboratory results rather than field data.
 
 ## Generic Serial Product Test Framework
 
